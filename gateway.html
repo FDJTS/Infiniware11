@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>structural verification // infiniware</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+
+<body
+    style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background-color: #0A0A0B;">
+    <main class="container" style="max-width: 450px; text-align: center;">
+        <section class="card" style="border-style: solid; padding: 50px 30px;">
+            <div class="logo-text" style="font-size: 2rem; margin-bottom: 20px;"><span>I</span>nfiniware</div>
+            <h2 class="cursive-accent">access pending</h2>
+            <p class="text-dim" style="margin-bottom: 30px;">To maintain structural integrity, we must verify your
+                presence. Please complete the security check below to enter the ecosystem.</p>
+
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <!-- Cloudflare Turnstile Widget -->
+                <div class="cf-turnstile" data-sitekey="0x4AAAAAAACwj7-047z-H2s4" data-callback="onTurnstileSuccess">
+                </div>
+            </div>
+
+            <p id="verification-status" style="font-size: 0.8rem; color: var(--clr-red-accent); opacity: 0.7;">awaiting
+                human interaction...</p>
+        </section>
+    </main>
+
+    <script>
+        function onTurnstileSuccess(token) {
+            document.getElementById('verification-status').textContent = 'structural verification successful. redirecting...';
+            document.getElementById('verification-status').style.color = '#00ff00';
+
+            // Set session verification
+            sessionStorage.setItem('infiniware_human_verified', 'true');
+
+            // Redirect to home after a brief pause
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1000);
+        }
+
+        // Prevent back-button-looping if they somehow get here while verified
+        if (sessionStorage.getItem('infiniware_human_verified') === 'true') {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+
+</html>

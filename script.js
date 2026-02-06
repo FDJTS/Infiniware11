@@ -1,36 +1,106 @@
-/**
- * infiniware structural engine (v3.0)
- * 100% vanilla js - firebase edition
- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, deleteUser, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
 
-// Firebase Configuration (User must replace with their own config)
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_AUTH_DOMAIN",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_STORAGE_BUCKET",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyB6PPd_kNJkvkSQ9Ilfa9Q6nQ2rGo83zXU",
+    authDomain: "infiniware-b3b54.firebaseapp.com",
+    projectId: "infiniware-b3b54",
+    storageBucket: "infiniware-b3b54.firebasestorage.app",
+    messagingSenderId: "815856884778",
+    appId: "1:815856884778:web:7ddaab50243fc2b2d1b753",
+    measurementId: "G-8QEQ03JFKK"
 };
 
-// Initialize Firebase (Check if script is loaded first)
-let app, auth, db;
-if (typeof firebase !== 'undefined') {
-    app = firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth();
-    db = firebase.firestore();
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const analytics = getAnalytics(app);
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Structural Security Check (Gateway)
+    const isGateway = window.location.pathname.includes('gateway.html');
+    const isVerified = sessionStorage.getItem('infiniware_human_verified') === 'true';
+
+    if (!isVerified && !isGateway) {
+        window.location.href = 'gateway.html';
+        return;
+    }
+
     initNavigation();
     initScrollReveals();
     initCopyright();
 
-    // Community Logic
-    if (window.location.pathname.includes('community.html')) {
+    // Logic Dispatcher
+    const path = window.location.pathname;
+    if (path.includes('community.html')) {
         initCommunity();
+    } else if (path.includes('dashboard.html')) {
+        initDashboard();
     }
 });
+
+// --- Logic Shared across Auth Views ---
+
+onAuthStateChanged(auth, async (user) => {
+    const isDashboard = window.location.pathname.includes('dashboard.html');
+    const isCommunity = window.location.pathname.includes('community.html');
+
+    const dashboardLink = document.getElementById('nav-dashboard');
+
+    if (user) {
+        if (dashboardLink) dashboardLink.style.display = 'block';
+        if (!user.emailVerified) {
+            handleUnverified(user, isDashboard, isCommunity);
+        } else {
+            // Verified User
+            if (isCommunity) {
+                // Instant reload to dashboard
+                window.location.href = 'dashboard.html';
+            }
+            if (isDashboard) {
+                checkBanStatus(user.uid);
+                listenForPosts();
+                updateUserUI(user);
+            }
+        }
+    } else {
+        // Unauthenticated
+        if (dashboardLink) dashboardLink.style.display = 'none';
+        if (isDashboard) {
+            window.location.href = 'community.html';
+        }
+    }
+});
+
+function handleUnverified(user, isDashboard, isCommunity) {
+    console.log("// infiniware ecosystem: pending verification for", user.email);
+
+    if (isCommunity) {
+        const notice = document.getElementById('verification-notice');
+        const authCard = document.querySelector('.organized-auth');
+        if (notice) notice.style.display = 'block';
+        if (authCard) authCard.style.display = 'none';
+    }
+
+    if (isDashboard) {
+        // Dashboard is off-limits for unverified
+        window.location.href = 'community.html';
+    }
+
+    // Polling for verification status
+    const pollInterval = setInterval(async () => {
+        await user.reload();
+        if (auth.currentUser.emailVerified) {
+            clearInterval(pollInterval);
+            console.log("// infiniware ecosystem: verification confirmed");
+            window.location.href = 'dashboard.html';
+        }
+    }, 3000);
+}
 
 // --- Navigation & Core UI ---
 
@@ -57,7 +127,7 @@ function initScrollReveals() {
         });
     }, { threshold: 0.1 });
 
-    document.querySelectorAll('.card, .post-entry, article').forEach(el => {
+    document.querySelectorAll('.card, .post-card, .post-entry, article').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(20px)';
         el.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
@@ -73,33 +143,14 @@ function initCopyright() {
     }
 }
 
-// --- Community & Firebase Auth Logic ---
+// --- Community Page Logic (Public Entrance) ---
 
-async function initCommunity() {
+function initCommunity() {
     const loginForm = document.getElementById('email-login-form');
     const signupForm = document.getElementById('email-signup-form');
-    const logoutBtn = document.getElementById('btn-logout');
-    const deleteBtn = document.getElementById('btn-delete-account');
-    const postForm = document.getElementById('post-creation-form');
-
     const toggleSignInBtn = document.getElementById('toggle-signin');
     const toggleSignUpBtn = document.getElementById('toggle-signup');
 
-    if (!auth || !db) {
-        console.error("Firebase not initialized correctly.");
-        return;
-    }
-
-    // 1. Check Auth Status (Real-time)
-    auth.onAuthStateChanged(user => {
-        updateAuthUI(user);
-        if (user) {
-            checkBanStatus(user.uid);
-            listenForPosts();
-        }
-    });
-
-    // 2. UI Toggles
     if (toggleSignInBtn && toggleSignUpBtn) {
         toggleSignInBtn.addEventListener('click', () => {
             loginForm.style.display = 'flex';
@@ -116,15 +167,20 @@ async function initCommunity() {
         });
     }
 
-    // 3. Event Listeners
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = loginForm.email.value;
             const password = loginForm.password.value;
+            const turnstileResponse = loginForm.querySelector('[name="cf-turnstile-response"]')?.value;
+
+            if (!turnstileResponse) {
+                alert("Security check required. Please complete the Turnstile challenge.");
+                return;
+            }
 
             try {
-                await auth.signInWithEmailAndPassword(email, password);
+                await signInWithEmailAndPassword(auth, email, password);
             } catch (err) {
                 alert(`auth failure: ${err.message}`);
             }
@@ -137,30 +193,49 @@ async function initCommunity() {
             const username = signupForm.username.value;
             const email = signupForm.email.value;
             const password = signupForm.password.value;
+            const turnstileResponse = signupForm.querySelector('[name="cf-turnstile-response"]')?.value;
+
+            if (!turnstileResponse) {
+                alert("Security check required. Please complete the Turnstile challenge.");
+                return;
+            }
 
             try {
-                const credential = await auth.createUserWithEmailAndPassword(email, password);
+                const credential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = credential.user;
 
-                // Save profile details to Firestore
-                await db.collection('users').doc(user.uid).set({
+                // 1. Send Verification
+                await sendEmailVerification(user);
+
+                // 2. Save Profile
+                await setDoc(doc(db, 'users', user.uid), {
                     username: username,
                     email: email,
                     isBanned: false,
                     role: 'user',
-                    created_at: firebase.firestore.FieldValue.serverTimestamp()
+                    created_at: new Date()
                 });
 
-                alert('account initialized. welcome to infiniware.');
+                alert('Account initialized. Please check your email to verify your identity before dashboard access.');
             } catch (err) {
                 alert(`initialization failure: ${err.message}`);
             }
         });
     }
 
+    listenForPosts(); // Show public feed
+}
+
+// --- Dashboard Page Logic (Private Member View) ---
+
+function initDashboard() {
+    const logoutBtn = document.getElementById('btn-logout');
+    const deleteBtn = document.getElementById('btn-delete-account');
+    const postForm = document.getElementById('post-creation-form');
+
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            auth.signOut();
+            signOut(auth);
         });
     }
 
@@ -168,11 +243,13 @@ async function initCommunity() {
         deleteBtn.addEventListener('click', async () => {
             if (confirm('permanently delete account and all structural data?')) {
                 const user = auth.currentUser;
-                // Note: Real deletion would require re-authentication or a cloud function
-                // for this shim, we'll just delete the firestore doc and user
-                await db.collection('users').doc(user.uid).delete();
-                await user.delete();
-                window.location.reload();
+                if (!user) return;
+                try {
+                    await deleteDoc(doc(db, 'users', user.uid));
+                    await deleteUser(user);
+                } catch (err) {
+                    alert(`deletion failed: ${err.message}. you may need to re-authenticate first.`);
+                }
             }
         });
     }
@@ -183,18 +260,19 @@ async function initCommunity() {
             const content = document.getElementById('post-content').value;
             const user = auth.currentUser;
 
-            if (!user) return alert("auth required.");
+            if (!user) return;
 
             try {
-                // Check if user is banned before posting (double check)
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                if (userDoc.data()?.isBanned) throw new Error("this account is banned from posting.");
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists() && userDoc.data()?.isBanned) {
+                    throw new Error("account is banned.");
+                }
 
-                await db.collection('posts').add({
+                await addDoc(collection(db, 'posts'), {
                     uid: user.uid,
-                    username: userDoc.data().username,
+                    username: userDoc.exists() ? userDoc.data().username : user.email.split('@')[0],
                     content: content,
-                    created_at: firebase.firestore.FieldValue.serverTimestamp()
+                    created_at: new Date()
                 });
 
                 document.getElementById('post-content').value = '';
@@ -205,34 +283,21 @@ async function initCommunity() {
     }
 }
 
-function updateAuthUI(user) {
-    const authSection = document.getElementById('auth-section');
-    const userSection = document.getElementById('user-profile-section');
+function updateUserUI(user) {
     const displayUsername = document.getElementById('display-username');
-
-    if (user) {
-        authSection.style.display = 'none';
-        userSection.style.display = 'block';
-        // Get username from Firestore if possible, fallback to email
-        db.collection('users').doc(user.uid).get().then(doc => {
-            if (doc.exists) {
-                displayUsername.textContent = doc.data().username;
-            } else {
-                displayUsername.textContent = user.email.split('@')[0];
-            }
+    if (displayUsername) {
+        getDoc(doc(db, 'users', user.uid)).then(docSnap => {
+            displayUsername.textContent = docSnap.exists() ? docSnap.data().username : user.email.split('@')[0];
         });
-    } else {
-        authSection.style.display = 'block';
-        userSection.style.display = 'none';
     }
 }
 
 async function checkBanStatus(uid) {
-    db.collection('users').doc(uid).onSnapshot(doc => {
-        if (doc.exists && doc.data().isBanned) {
-            alert("This account has been banned. Access to community features is restricted.");
-            auth.signOut();
-            window.location.href = '/index.html';
+    onSnapshot(doc(db, 'users', uid), (snapshot) => {
+        if (snapshot.exists() && snapshot.data().isBanned) {
+            alert("Account banned. Access restricted.");
+            signOut(auth);
+            window.location.href = 'index.html';
         }
     });
 }
@@ -241,14 +306,15 @@ function listenForPosts() {
     const container = document.getElementById('posts-container');
     if (!container) return;
 
-    db.collection('posts').orderBy('created_at', 'desc').onSnapshot(snapshot => {
+    const q = query(collection(db, 'posts'), orderBy('created_at', 'desc'));
+    onSnapshot(q, (snapshot) => {
         if (snapshot.empty) {
             container.innerHTML = '<p class="text-dim">no posts yet. be the first to contribute.</p>';
             return;
         }
 
-        container.innerHTML = snapshot.docs.map(doc => {
-            const post = doc.data();
+        container.innerHTML = snapshot.docs.map(docSnap => {
+            const post = docSnap.data();
             return `
                 <div class="post-card" style="border-bottom: 1px solid #111; padding: 30px 0;">
                     <div class="user-block" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
@@ -257,7 +323,7 @@ function listenForPosts() {
                         </div>
                         <div>
                             <span class="user-name" style="display: block; font-weight: 700;">${post.username || 'anonymous'}</span>
-                            <span style="font-size: 0.7rem; color: #444;">${post.created_at ? formatTime(post.created_at.toDate()) : 'just now'}</span>
+                            <span style="font-size: 0.7rem; color: #444;">${post.created_at ? formatTime(post.created_at) : 'just now'}</span>
                         </div>
                     </div>
                     <p style="color: #aaa; line-height: 1.7;">${post.content}</p>
@@ -267,6 +333,7 @@ function listenForPosts() {
     });
 }
 
-function formatTime(date) {
+function formatTime(timestamp) {
+    const date = (timestamp && timestamp.toDate) ? timestamp.toDate() : new Date();
     return date.toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }).toLowerCase();
 }

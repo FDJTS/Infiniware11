@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dashboard // infiniware</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header class="header">
+        <div class="nav-brand">
+            <a href="index.html" class="logo-text"><span>I</span>nfiniware</a>
+        </div>
+        <nav>
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-link">home</a></li>
+                <li><a href="products.html" class="nav-link">products</a></li>
+                <li><a href="blog.html" class="nav-link">blog</a></li>
+                <li><a href="community.html" class="nav-link">community</a></li>
+                <li><a href="dashboard.html" class="nav-link active" id="nav-dashboard"
+                        style="display: none;">dashboard</a></li>
+                <li><a href="connect.html" class="nav-link">connect</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section>
+            <h2 class="cursive-accent">welcome back</h2>
+            <h1>your dashboard</h1>
+            <p class="text-dim">this is your private habitat in the ecosystem. manage your presence and share structural
+                updates.</p>
+
+            <div id="user-profile-section" class="card mt-xl" style="border-style: solid;">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div id="display-avatar"
+                            style="width: 48px; height: 48px; background: #222; border: 1px solid #333; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                            <!-- avatar gets injected here -->
+                        </div>
+                        <div>
+                            <h3 id="display-username">username</h3>
+                            <p class="text-dim" style="font-size: 0.8rem; margin: 0;">welcome back to the
+                                infrastructure. stay structural.</p>
+                        </div>
+                    </div>
+                    <div style="display:flex; gap: 10px;">
+                        <button id="btn-logout" class="btn"
+                            style="border-color: #333; font-size: 0.75rem;">logout</button>
+                        <button id="btn-delete-account" class="btn"
+                            style="border-color: #1a0000; color: #ff6666; font-size: 0.75rem;">delete account</button>
+                    </div>
+                </div>
+
+                <form id="post-creation-form" class="mt-xl">
+                    <textarea id="post-content"
+                        placeholder="share something structural... (no links to viruses/nsfw content)" required
+                        style="width: 100%; min-height: 100px; background: #080808; border: 1px solid #222; color: #fff; padding: 15px; font-family: var(--f-content); line-height: 1.6; resize: vertical;"></textarea>
+                    <div class="mt-md" style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="text-dim" style="font-size: 0.75rem;">the guardian system is watching. keep it
+                            clean.</span>
+                        <button type="submit" class="btn">integrate post</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="community-feed mt-xxl">
+                <h2 class="ui-font" style="font-size: 1rem; color: var(--clr-red-accent); margin-bottom: 20px;">latest
+                    from the feed</h2>
+                <div id="posts-container">
+                    <p class="text-dim">connecting to backend infrastructure...</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo-text"><span>I</span>nfiniware</div>
+                <p class="text-dim" style="max-width: 250px; font-size: 0.85rem;">
+                    an independent ecosystem building tools with intention and structural focus.
+                </p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>platform</h4>
+                    <div class="footer-item"><a href="manifesto.html" class="footer-link">manifesto</a></div>
+                    <div class="footer-item"><a href="faq.html" class="footer-link">faq</a></div>
+                    <div class="footer-item"><a href="connect.html" class="footer-link">connect</a></div>
+                </div>
+                <div class="footer-col">
+                    <h4>legal</h4>
+                    <div class="footer-item"><a href="privacy.html" class="footer-link">privacy policy</a></div>
+                    <div class="footer-item"><a href="license.html" class="footer-link">license</a></div>
+                </div>
+                <div class="footer-col">
+                    <h4>support</h4>
+                    <div class="footer-item"><a href="mailto:support@infiniware.bid"
+                            class="footer-link">support@infiniware.bid</a></div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>infiniware © 2026</span>
+            <span>crafted by human hand</span>
+        </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>

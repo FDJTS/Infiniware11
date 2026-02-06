@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>community // infiniware</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 
 <body>
@@ -19,6 +20,8 @@
                 <li><a href="products.html" class="nav-link">products</a></li>
                 <li><a href="blog.html" class="nav-link">blog</a></li>
                 <li><a href="community.html" class="nav-link active">community</a></li>
+                <li><a href="dashboard.html" class="nav-link" id="nav-dashboard" style="display: none;">dashboard</a>
+                </li>
                 <li><a href="connect.html" class="nav-link">connect</a></li>
             </ul>
         </nav>
@@ -35,7 +38,7 @@
             <div id="auth-section" class="organized-auth mt-xl">
                 <div class="card" style="border-style: dashed;">
                     <h3>join the conversation</h3>
-                    <p>jump in. we keep it simple here. use your github to sync up or use email.</p>
+                    <p>jump in. we keep it simple here. use your email to initialize access.</p>
 
 
                     <div class="auth-toggle"
@@ -55,6 +58,8 @@
                             style="background:transparent; border:1px solid #333; color:white; padding:10px; font-family:var(--f-ui);">
                         <input type="password" name="password" placeholder="password" required
                             style="background:transparent; border:1px solid #333; color:white; padding:10px; font-family:var(--f-ui);">
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAACwj7-047z-H2s4" style="margin-top: 10px;">
+                        </div>
                         <button type="submit" class="btn" style="border-color: var(--clr-gray-dim);">login</button>
                     </form>
 
@@ -69,50 +74,34 @@
                             style="background:transparent; border:1px solid #333; color:white; padding:10px; font-family:var(--f-ui);">
                         <p class="text-dim" style="font-size: 0.75rem;">12+ chars, uppercase, lowercase, number, 2+
                             symbols.</p>
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAACwj7-047z-H2s4" style="margin-top: 10px;">
+                        </div>
                         <button type="submit" class="btn" style="border-color: var(--clr-gray-dim);">initialize
                             account</button>
                     </form>
                 </div>
             </div>
 
-            <div id="user-profile-section" class="card mt-xl" style="display: none; border-style: solid;">
-                <div style="display: flex; justify-content: space-between; align-items: start;">
-                    <div style="display: flex; gap: 15px; align-items: center;">
-                        <div id="display-avatar"
-                            style="width: 48px; height: 48px; background: #222; border: 1px solid #333; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                            <!-- avatar gets injected here -->
-                        </div>
-                        <div>
-                            <h3 id="display-username">username</h3>
-                            <p class="text-dim" style="font-size: 0.8rem; margin: 0;">welcome back to the
-                                infrastructure.</p>
-                        </div>
-                    </div>
-                    <div style="display:flex; gap: 10px;">
-                        <button id="btn-logout" class="btn"
-                            style="border-color: #333; font-size: 0.75rem;">logout</button>
-                        <button id="btn-delete-account" class="btn"
-                            style="border-color: #1a0000; color: #ff6666; font-size: 0.75rem;">delete account</button>
-                    </div>
-                </div>
-
-                <form id="post-creation-form" class="mt-xl">
-                    <textarea id="post-content"
-                        placeholder="share something structural... (no links to viruses/nsfw content)" required
-                        style="width: 100%; min-height: 100px; background: #080808; border: 1px solid #222; color: #fff; padding: 15px; font-family: var(--f-content); line-height: 1.6; resize: vertical;"></textarea>
-                    <div class="mt-md" style="display: flex; justify-content: space-between; align-items: center;">
-                        <span class="text-dim" style="font-size: 0.75rem;">the guardian system is watching. keep it
-                            clean.</span>
-                        <button type="submit" class="btn">integrate post</button>
-                    </div>
-                </form>
-            </div>
-
+            <!-- Public Community Feed -->
             <div class="community-feed mt-xxl">
                 <h2 class="ui-font" style="font-size: 1rem; color: var(--clr-red-accent); margin-bottom: 20px;">latest
                     from the feed</h2>
                 <div id="posts-container">
                     <p class="text-dim">connecting to backend infrastructure...</p>
+                </div>
+            </div>
+
+            <!-- Verification Notification (Hidden by default) -->
+            <div id="verification-notice" class="card mt-xl"
+                style="display: none; border: 1px dashed var(--clr-red-accent); background: rgba(227, 30, 36, 0.05);">
+                <div style="display: flex; gap: 20px; align-items: center;">
+                    <div style="font-size: 2rem;">✉️</div>
+                    <div>
+                        <h3 style="color: var(--clr-red-accent); margin: 0;">Verification Required</h3>
+                        <p style="margin: 5px 0 0 0;">Check your inbox for a message from
+                            <strong>no-reply@infiniware.bid</strong>. Once verified, this dashboard will unlock
+                            automatically.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -151,12 +140,7 @@
         </div>
     </footer>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 
 </html>
