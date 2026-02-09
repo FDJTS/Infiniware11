@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>privacy // infiniware</title>
+    <title>manifesto // infiniware</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -18,7 +18,7 @@
                 <li><a href="index.html" class="nav-link">home</a></li>
                 <li><a href="products.html" class="nav-link">products</a></li>
                 <li><a href="blog.html" class="nav-link">blog</a></li>
-                <li><a href="dashboard.html" class="nav-link">community</a></li>
+                <li><a href="community.html" class="nav-link">community</a></li>
                 <li><a href="connect.html" class="nav-link">connect</a></li>
             </ul>
         </nav>
@@ -26,56 +26,64 @@
 
     <main class="container">
         <section>
-            <h2 class="cursive-accent">03 // privacy</h2>
-            <h1>your data is yours.</h1>
+            <h2 class="cursive-accent">01 // manifesto</h2>
+            <h1>the philosophy of human-made software</h1>
 
-            <div class="mt-xl">
-                <div class="detail-block">
-                    <h3>core privacy philosophy</h3>
+            <div class="detail-block">
+                <h3>the challenge of noise</h3>
+                <p>
+                    today's digital landscape is saturated with automated noise. applications
+                    often prioritize engagement over utility, and computation over craftsmanship.
+                    at **infiniware**, we reject the notion that software should be a generic
+                    commodity. we believe it should be a deliberate expression of human thought.
+                </p>
+            </div>
+
+            <div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+                <div class="card">
+                    <h3>clarity over complexity</h3>
                     <p>
-                        at **infiniware**, we believe privacy isn't a feature—it's a fundamental
-                        right. our data collection strategy is simple: we don't want what we
-                        don't need. your behavioral data is not an asset to us; your trust is.
+                        complexity is the enemy of focus. we build tools that respect your
+                        attention. no clutter, no unnecessary features, no "growth hacking."
+                        just functional software that does exactly what it says it does,
+                        without demanding more than it needs.
                     </p>
                 </div>
 
-                <div class="card mb-lg">
-                    <h4>1. what we collect</h4>
+                <div class="card">
+                    <h3>transparency as foundation</h3>
                     <p>
-                        - **authentication data**: for email signups, we store your email
-                        address and a securely hashed password. for github auth, we store
-                        your username and profile picture url for personalization.
-                        - **content**: any posts or comments you intentionally share in the
-                        community tab are stored in our secure database.
+                        our systems are open, our logic is clear, and our intentions are honest.
+                        we build for the developer and the user who value knowing the mechanics
+                        behind their tools. transparency isn't just a policy; it's our backbone.
                     </p>
                 </div>
 
-                <div class="card mb-lg">
-                    <h4>2. what we do NOT collect</h4>
+                <div class="card">
+                    <h3>the silent design language</h3>
                     <p>
-                        - we do not use third-party tracking pixels (e.g., meta, google ads).
-                        - we do not sell or lease user data under any circumstances.
-                        - we do not track your location externally (al-muslim location data
-                        stays local on your device).
+                        design should not scream for your attention. it should provide a calm,
+                        highly-structured environment where the focus remains on the content
+                        and the task at hand. we use spacing, alignment, and typography as
+                        structural elements, not decoration.
                     </p>
                 </div>
 
-                <div class="card mb-lg">
-                    <h4>3. technical security</h4>
+                <div class="card">
+                    <h3>privacy by default</h3>
                     <p>
-                        we use industry-standard encryption for data transit (tls) and at rest.
-                        security is built into the architecture from the first line of code,
-                        prioritizing isolation and minimal access privileges.
+                        data is a significant liability, not an asset to be harvested. we collect
+                        the absolute minimum required to provide our services. we don't track
+                        your movement; we facilitate your productivity.
                     </p>
                 </div>
+            </div>
 
-                <div class="detail-block">
-                    <h4>account deletion</h4>
-                    <p>
-                        you have full control. you can request a complete data purge or account
-                        deletion at any time through your dashboard or by contacting support.
-                    </p>
-                </div>
+            <div class="mt-xl human-touch">
+                <p>
+                    infiniware is a testament to what a single developer can achieve when focus
+                    is prioritized over expansion. every line is curated.
+                </p>
             </div>
         </section>
     </main>
@@ -113,7 +121,7 @@
         </div>
     </footer>
 
-    <script type="module" src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

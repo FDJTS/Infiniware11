@@ -1,32 +1,21 @@
 {
-  "name": "infiniware",
+  "name": "infiniware-guardian-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "script.js",
+  "description": "Node.js Guardian Server for Infiniware Community",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "dev": "node --watch server.js"
+    "dev": "nodemon server.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "firebase",
+    "moderation",
+    "server"
+  ],
+  "author": "Infiniware",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "axios": "^1.13.4",
-    "bcrypt": "^6.0.0",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "express-rate-limit": "^8.2.1",
-    "express-validator": "^7.3.1",
-    "firebase": "^12.9.0",
-    "helmet": "^8.1.0",
-    "jsonwebtoken": "^9.0.3",
-    "nodemailer": "^8.0.0",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7",
-    "xss": "^1.0.15"
+    "firebase-admin": "^11.5.0",
+    "fs-extra": "^11.1.0"
   }
 }

@@ -28,7 +28,7 @@
                 <li><a href="products.html" class="nav-link active">products</a></li>
                 <li><a href="blog.html" class="nav-link">blog</a></li>
                 <li><a href="docs.html" class="nav-link">docs</a></li>
-                <li><a href="dashboard.html" class="nav-link">community</a></li>
+                <li><a href="community.html" class="nav-link">community</a></li>
                 <li><a href="connect.html" class="nav-link">connect</a></li>
             </ul>
         </nav>
@@ -159,7 +159,7 @@
         </div>
     </footer>
 
-    <script type="module" src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 
 </html>

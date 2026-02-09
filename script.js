@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, deleteUser, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, deleteDoc } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-analytics.js";
 
 // Your web app's Firebase configuration
@@ -21,15 +21,6 @@ const db = getFirestore(app);
 const analytics = getAnalytics(app);
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Structural Security Check (Gateway)
-    const isGateway = window.location.pathname.includes('gateway.html');
-    const isVerified = sessionStorage.getItem('infiniware_human_verified') === 'true';
-
-    if (!isVerified && !isGateway) {
-        window.location.href = 'gateway.html';
-        return;
-    }
-
     initNavigation();
     initScrollReveals();
     initCopyright();
@@ -272,7 +263,7 @@ function initDashboard() {
                     uid: user.uid,
                     username: userDoc.exists() ? userDoc.data().username : user.email.split('@')[0],
                     content: content,
-                    created_at: new Date()
+                    created_at: serverTimestamp()
                 });
 
                 document.getElementById('post-content').value = '';
@@ -313,8 +304,17 @@ function listenForPosts() {
             return;
         }
 
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         container.innerHTML = snapshot.docs.map(docSnap => {
             const post = docSnap.data();
+            const safeContent = escapeHtml(post.content || '');
+            const safeUsername = escapeHtml(post.username || 'anonymous');
             return `
                 <div class="post-card" style="border-bottom: 1px solid #111; padding: 30px 0;">
                     <div class="user-block" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
@@ -322,11 +322,11 @@ function listenForPosts() {
                             <div style="width: 100%; height: 100%; background: #444;"></div>
                         </div>
                         <div>
-                            <span class="user-name" style="display: block; font-weight: 700;">${post.username || 'anonymous'}</span>
+                            <span class="user-name" style="display: block; font-weight: 700;">${safeUsername}</span>
                             <span style="font-size: 0.7rem; color: #444;">${post.created_at ? formatTime(post.created_at) : 'just now'}</span>
                         </div>
                     </div>
-                    <p style="color: #aaa; line-height: 1.7;">${post.content}</p>
+                    <p style="color: #aaa; line-height: 1.7;">${safeContent}</p>
                 </div>
             `;
         }).join('');
