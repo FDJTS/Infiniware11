@@ -1,130 +1,129 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>User Profile - Infiniware</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="stylesheet" href="style.css" />
     <style>
-        .profile-container {
-            max-width: 600px;
-            margin: 80px auto;
-            padding: 24px;
-        }
+      .profile-container {
+        max-width: 600px;
+        margin: 80px auto;
+        padding: 24px;
+      }
 
-        .profile-header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: 16px;
-        }
+      .profile-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 16px;
+      }
 
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            background: var(--clr-gray-dark);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            color: var(--clr-gray-dim);
-            overflow: hidden;
-            border-radius: 0;
-            /* Squared */
-        }
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+        background: var(--clr-gray-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: var(--clr-gray-dim);
+        overflow: hidden;
+        border-radius: 0;
+        /* Squared */
+      }
 
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
 
-        .profile-name {
-            font-family: var(--f-ui);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--clr-white);
-            margin: 0;
-        }
+      .profile-name {
+        font-family: var(--f-ui);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--clr-white);
+        margin: 0;
+      }
 
-        .profile-bio {
-            color: var(--clr-gray-dim);
-            line-height: 1.5;
-            max-width: 400px;
-        }
+      .profile-bio {
+        color: var(--clr-gray-dim);
+        line-height: 1.5;
+        max-width: 400px;
+      }
 
-        .profile-meta {
-            display: flex;
-            gap: 16px;
-            margin-top: 8px;
-            font-size: 0.9rem;
-            color: var(--clr-red-accent);
-        }
+      .profile-meta {
+        display: flex;
+        gap: 16px;
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: var(--clr-red-accent);
+      }
 
-        .profile-meta a {
-            color: inherit;
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-        }
+      .profile-meta a {
+        color: inherit;
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+      }
 
-        .profile-meta a:hover {
-            border-color: currentColor;
-        }
+      .profile-meta a:hover {
+        border-color: currentColor;
+      }
 
-        .loading-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 60vh;
-        }
+      .loading-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 60vh;
+      }
 
-        #error-msg {
-            color: var(--clr-red-accent);
-            text-align: center;
-            margin-top: 20px;
-        }
+      #error-msg {
+        color: var(--clr-red-accent);
+        text-align: center;
+        margin-top: 20px;
+      }
     </style>
-</head>
+  </head>
 
-<body class="dash-wrapper">
+  <body class="dash-wrapper">
     <nav class="navbar">
-        <div class="nav-container">
-            <a href="index.html" class="logo">
-                <div class="logo-text"><span>I</span>nfiniware</div>
-            </a>
-            <a href="dashboard.html" class="btn btn-ghost">dashboard</a>
-        </div>
+      <div class="nav-container">
+        <a href="index.html" class="logo">
+          <div class="logo-text"><span>I</span>nfiniware</div>
+        </a>
+        <a href="dashboard.html" class="btn btn-ghost">dashboard</a>
+      </div>
     </nav>
 
     <main class="profile-container">
-        <div id="loading" class="loading-screen">
-            <div class="loading-spinner"></div>
-            <p class="text-dim" style="margin-top: 16px;">fetching profile...</p>
-        </div>
+      <div id="loading" class="loading-screen">
+        <div class="loading-spinner"></div>
+        <p class="text-dim" style="margin-top: 16px">fetching profile...</p>
+      </div>
 
-        <div id="profile-content" style="display: none;">
-            <div class="profile-header">
-                <div class="profile-avatar" id="p-avatar">?</div>
-                <h1 class="profile-name" id="p-username">user</h1>
-                <p class="profile-bio" id="p-bio">no bio available.</p>
-                <div class="profile-meta">
-                    <span id="p-location"></span>
-                    <a href="#" id="p-website" target="_blank" style="display: none;">website ↗</a>
-                </div>
-            </div>
+      <div id="profile-content" style="display: none">
+        <div class="profile-header">
+          <div class="profile-avatar" id="p-avatar">?</div>
+          <h1 class="profile-name" id="p-username">user</h1>
+          <p class="profile-bio" id="p-bio">no bio available.</p>
+          <div class="profile-meta">
+            <span id="p-location"></span>
+            <a href="#" id="p-website" target="_blank" style="display: none">website ↗</a>
+          </div>
         </div>
+      </div>
 
-        <div id="error-msg" style="display: none;">
-            <h2>user not found</h2>
-            <p class="text-dim">the requested profile could not be loaded.</p>
-        </div>
+      <div id="error-msg" style="display: none">
+        <h2>user not found</h2>
+        <p class="text-dim">the requested profile could not be loaded.</p>
+      </div>
     </main>
 
     <script type="module" src="profile.js"></script>
-</body>
-
+  </body>
 </html>
