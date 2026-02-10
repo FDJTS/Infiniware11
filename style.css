@@ -732,7 +732,21 @@ section {
 }
 
 @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Utterances (GitHub comments) integration */
+.utterances {
+    max-width: 100% !important;
+    margin: 0 !important;
+}
+
+.utterances-frame {
+    border: 1px solid var(--clr-gray-dark) !important;
+    border-radius: 4px;
+    color-scheme: dark;
 }
 
 /* end of core styles */

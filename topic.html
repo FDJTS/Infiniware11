@@ -22,7 +22,7 @@
     </nav>
 
     <div class="container" style="max-width: 900px; margin-top: 40px;">
-        
+
         <!-- Topic Header -->
         <div id="topic-header" class="card mb-lg">
             <div class="loading-spinner"></div>
@@ -33,24 +33,15 @@
             <div class="loading-spinner"></div>
         </div>
 
-        <!-- Reply Form -->
-        <div id="reply-section" class="card" style="display: none;">
-            <h3 class="mb-md">post a reply</h3>
-            <form id="reply-form" class="flex-col gap-md">
-                <textarea id="reply-content" class="input-field" rows="6" placeholder="write your reply... markdown supported" required></textarea>
-                
-                <div class="input-group">
-                    <label class="input-label">attach images (optional)</label>
-                    <input type="file" id="reply-image-input" class="input-field" accept="image/*" multiple>
-                    <div id="reply-image-previews" class="flex gap-md mt-md" style="flex-wrap: wrap;"></div>
-                </div>
-
-                <div class="flex gap-md align-center">
-                    <button type="submit" class="btn btn-red" id="reply-submit-btn">post reply</button>
-                </div>
-
-                <p id="reply-error-msg" class="text-red" style="display: none; font-size: 0.85rem;"></p>
-            </form>
+        <!-- Utterances Comments (GitHub Issues) -->
+        <div id="comments-section" class="card" style="display: none;">
+            <h3 class="mb-md">discussion</h3>
+            <p class="text-dim" style="font-size: 0.85rem; margin-bottom: 16px;">
+                powered by github issues. sign in with github to comment.
+            </p>
+            <script src="https://utteranc.es/client.js" repo="FDJTS/Infiniware11" issue-term="pathname"
+                theme="github-dark" crossorigin="anonymous" async>
+                </script>
         </div>
 
     </div>
@@ -58,23 +49,16 @@
     <script type="module">
         import { auth } from './firebase-init.js';
         import { initAuthListener, logout } from './auth.js';
-        import { getTopic, subscribeToPosts, createPost, updatePost, deletePost } from './community.js';
-        import { renderContent, validateImageFile, createImagePreview, formatDate } from './utils.js';
+        import { getTopic, subscribeToPosts, updatePost, deletePost } from './community.js';
+        import { renderContent, formatDate } from './utils.js';
 
         const topicHeader = document.getElementById('topic-header');
         const postsContainer = document.getElementById('posts-container');
-        const replySection = document.getElementById('reply-section');
-        const replyForm = document.getElementById('reply-form');
-        const replyContent = document.getElementById('reply-content');
-        const replyImageInput = document.getElementById('reply-image-input');
-        const replyImagePreviews = document.getElementById('reply-image-previews');
-        const replyErrorMsg = document.getElementById('reply-error-msg');
-        const replySubmitBtn = document.getElementById('reply-submit-btn');
+        const commentsSection = document.getElementById('comments-section');
         const logoutBtn = document.getElementById('logout-btn');
 
         let currentTopic = null;
         let currentUser = null;
-        let replyImages = [];
 
         // Get topic ID from URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -109,7 +93,6 @@
                 }
 
                 const dateStr = formatDate(currentTopic.created_at);
-                const isOwner = currentUser && currentUser.uid === currentTopic.author_uid;
 
                 topicHeader.innerHTML = `
                     <div class="flex justify-between align-start gap-md mb-md">
@@ -129,8 +112,9 @@
                     </div>
                 `;
 
+                // Show comments section (Utterances) unless topic is locked
                 if (!currentTopic.locked) {
-                    replySection.style.display = 'block';
+                    commentsSection.style.display = 'block';
                 }
             } catch (error) {
                 console.error("Error loading topic:", error);
@@ -143,16 +127,15 @@
                 postsContainer.innerHTML = '';
 
                 if (posts.length === 0) {
-                    postsContainer.innerHTML = '<p class="text-dim text-center">no posts yet.</p>';
+                    postsContainer.innerHTML = '<p class="text-dim text-center">no content yet.</p>';
                     return;
                 }
 
-                posts.forEach((post, index) => {
-                    const isOwner = currentUser && currentUser.uid === post.author_uid;
-                    const isFirstPost = index === 0;
-                    const card = createPostCard(post, isOwner, isFirstPost);
-                    postsContainer.appendChild(card);
-                });
+                // Show only the first post (topic content) - additional discussion happens in Utterances
+                const firstPost = posts[0];
+                const isOwner = currentUser && currentUser.uid === firstPost.author_uid;
+                const card = createPostCard(firstPost, isOwner, true);
+                postsContainer.appendChild(card);
             });
         }
 
@@ -162,7 +145,7 @@
             div.id = `post-${post.id}`;
 
             const dateStr = formatDate(post.created_at);
-            const editedStr = post.updated_at && post.updated_at.getTime() !== post.created_at.getTime() 
+            const editedStr = post.updated_at && post.updated_at.getTime() !== post.created_at.getTime()
                 ? ' (edited)' : '';
 
             const mediaHtml = post.media_urls && post.media_urls.length > 0
@@ -218,11 +201,11 @@
                     textarea.className = 'input-field';
                     textarea.value = currentText;
                     textarea.rows = 6;
-                    
+
                     const saveBtn = document.createElement('button');
                     saveBtn.className = 'btn btn-red mt-sm';
                     saveBtn.textContent = 'save';
-                    
+
                     const cancelBtn = document.createElement('button');
                     cancelBtn.className = 'btn btn-ghost mt-sm';
                     cancelBtn.textContent = 'cancel';
@@ -241,7 +224,6 @@
                         }
                         try {
                             await updatePost(post.id, newContent);
-                            // Content will update via real-time listener
                         } catch (error) {
                             console.error("Error updating post:", error);
                             alert('failed to update post.');
@@ -257,7 +239,6 @@
                     if (confirm('are you sure you want to delete this post?')) {
                         try {
                             await deletePost(post.id);
-                            // Post will be removed via real-time listener
                         } catch (error) {
                             console.error("Error deleting post:", error);
                             alert('failed to delete post.');
@@ -268,81 +249,6 @@
 
             return div;
         }
-
-        replyImageInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            replyImages = [];
-            replyImagePreviews.innerHTML = '';
-
-            files.forEach((file, index) => {
-                const validation = validateImageFile(file);
-                if (!validation.valid) {
-                    replyErrorMsg.textContent = validation.error;
-                    replyErrorMsg.style.display = 'block';
-                    return;
-                }
-
-                replyImages.push(file);
-                createImagePreview(file, (previewUrl) => {
-                    if (previewUrl) {
-                        const div = document.createElement('div');
-                        div.style.position = 'relative';
-                        div.style.width = '100px';
-                        div.style.height = '100px';
-                        div.style.borderRadius = '4px';
-                        div.style.overflow = 'hidden';
-                        div.style.border = '1px solid var(--clr-gray-dark)';
-                        div.innerHTML = `
-                            <img src="${previewUrl}" style="width:100%; height:100%; object-fit:cover;">
-                            <button type="button" class="remove-image-btn" data-index="${index}" style="position:absolute; top:2px; right:2px; background:rgba(0,0,0,0.7); color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px;">×</button>
-                        `;
-                        replyImagePreviews.appendChild(div);
-
-                        div.querySelector('.remove-image-btn').addEventListener('click', () => {
-                            replyImages = replyImages.filter((_, i) => i !== index);
-                            div.remove();
-                        });
-                    }
-                });
-            });
-        });
-
-        replyForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            replyErrorMsg.style.display = 'none';
-
-            if (currentTopic.locked) {
-                replyErrorMsg.textContent = "this topic is locked.";
-                replyErrorMsg.style.display = 'block';
-                return;
-            }
-
-            const content = replyContent.value.trim();
-            if (content.length < 10) {
-                replyErrorMsg.textContent = "reply must be at least 10 characters.";
-                replyErrorMsg.style.display = 'block';
-                return;
-            }
-
-            replySubmitBtn.textContent = 'posting...';
-            replySubmitBtn.disabled = true;
-
-            try {
-                await createPost(topicId, content, null, replyImages);
-                replyContent.value = '';
-                replyImages = [];
-                replyImageInput.value = '';
-                replyImagePreviews.innerHTML = '';
-                replySubmitBtn.textContent = 'post reply';
-                replySubmitBtn.disabled = false;
-            } catch (error) {
-                console.error("Error creating reply:", error);
-                replyErrorMsg.textContent = "failed to post reply. please try again.";
-                replyErrorMsg.style.display = 'block';
-                replySubmitBtn.textContent = 'post reply';
-                replySubmitBtn.disabled = false;
-            }
-        });
 
         function escapeHtml(text) {
             const div = document.createElement('div');

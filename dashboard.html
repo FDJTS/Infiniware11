@@ -56,7 +56,8 @@
             <!-- Category Filter -->
             <div class="card mb-lg">
                 <div class="flex align-center gap-md" style="flex-wrap: wrap;">
-                    <button class="btn btn-ghost category-filter" data-category="" style="font-size: 0.85rem;">all topics</button>
+                    <button class="btn btn-ghost category-filter" data-category="" style="font-size: 0.85rem;">all
+                        topics</button>
                     <div id="category-filters" class="flex align-center gap-sm" style="flex-wrap: wrap;">
                         <!-- Categories injected here -->
                     </div>
@@ -71,18 +72,6 @@
             <!-- Topics Container -->
             <div id="topics-container" class="flex-col">
                 <div class="loading-spinner"></div>
-            </div>
-
-            <!-- Latest Posts Feed -->
-            <div class="divider my-xl"></div>
-            <div class="card">
-                <h3 class="mb-md">latest replies</h3>
-                <p class="text-dim" style="font-size: 0.8rem; margin-bottom: 16px;">
-                    pulled live across all topics.
-                </p>
-                <div id="latest-posts-container">
-                    <div class="loading-spinner"></div>
-                </div>
             </div>
         </div>
 
@@ -118,8 +107,10 @@
                             </div>
                             <div class="flex-col gap-sm">
                                 <input type="file" id="avatar-input" accept="image/*" style="display: none;">
-                                <button type="button" class="btn btn-ghost" id="avatar-upload-btn" style="font-size: 0.85rem;">choose image</button>
-                                <button type="button" class="btn-text text-dim hover-white" id="avatar-remove-btn" style="font-size: 0.85rem; display: none;">remove</button>
+                                <button type="button" class="btn btn-ghost" id="avatar-upload-btn"
+                                    style="font-size: 0.85rem;">choose image</button>
+                                <button type="button" class="btn-text text-dim hover-white" id="avatar-remove-btn"
+                                    style="font-size: 0.85rem; display: none;">remove</button>
                             </div>
                         </div>
                         <p class="text-dim" style="font-size: 0.75rem; margin-top: 8px;">max 5MB, jpg/png/gif/webp</p>
@@ -132,7 +123,8 @@
 
                     <div class="input-group">
                         <label class="input-label">bio / description</label>
-                        <textarea id="set-bio" class="input-field" rows="3" placeholder="tell us about yourself..."></textarea>
+                        <textarea id="set-bio" class="input-field" rows="3"
+                            placeholder="tell us about yourself..."></textarea>
                     </div>
 
                     <div class="input-group">
@@ -154,7 +146,8 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-red" style="width: fit-content;" id="save-settings-btn">save changes</button>
+                    <button type="submit" class="btn btn-red" style="width: fit-content;" id="save-settings-btn">save
+                        changes</button>
                     <p id="settings-error-msg" class="text-red" style="display: none; font-size: 0.85rem;"></p>
                 </form>
 
