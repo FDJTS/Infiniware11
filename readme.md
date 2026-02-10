@@ -2,7 +2,7 @@
 
 ![infiniware](infiniwarelogo.png)
 
-![views](https://komarev.com/ghpvc/?username=infiniware-repo&style=flat-square&color=black)
+![views](https://komarev.com/ghpvc/?username=infiniware-repo&style=flat-square&color=blue)
 
 **human-made software for a noisy world.**
 
