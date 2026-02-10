@@ -4,176 +4,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dashboard - infiniware</title>
+    <title>community — infiniware</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body>
-
-    <!-- Top Navigation (Reverted Style) -->
-    <nav class="header">
+    <header class="header">
         <div class="nav-brand">
             <a href="index.html" class="logo-text"><span>I</span>nfiniware</a>
         </div>
-        <div class="nav-list">
-            <!-- Combined Main Nav + Dashboard Nav -->
-            <a href="#" class="nav-link active" id="nav-feed">community feed</a>
-            <a href="#" class="nav-link" id="nav-profile">my profile</a>
-            <a href="#" class="nav-link" id="nav-settings">settings</a>
-        </div>
-        <div>
-            <a href="#" class="nav-link" id="logout-btn">sign out</a>
-        </div>
-    </nav>
+        <nav>
+            <ul class="nav-list">
+                <li><a href="index.html" class="nav-link">home</a></li>
+                <li><a href="products.html" class="nav-link">products</a></li>
+                <li><a href="blog.html" class="nav-link">blog</a></li>
+                <li><a href="docs.html" class="nav-link">docs</a></li>
+                <li><a href="dashboard.html" class="nav-link active">community</a></li>
+                <li><a href="connect.html" class="nav-link">connect</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <!-- Main Content (Centered, No Sidebar) -->
-    <div class="container" style="max-width: 900px; margin-top: 20px;">
-
-        <!-- Banned Message (Hidden by default) -->
-        <div id="banned-overlay"
-            style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
-            <h1 class="text-red">access denied</h1>
-            <p class="text-white mt-md">you have been banned from the infiniware community.</p>
-            <p class="text-dim mt-sm">reason: Violation of community guidelines (inappropriate content/activity).</p>
-            <p class="text-dim mt-lg">contact <a href="mailto:support@infiniware.bid" class="text-white"
-                    style="text-decoration:underline;">support@infiniware.bid</a> for appeals.</p>
-        </div>
-
-        <div id="user-header" class="flex justify-between align-center mb-xl">
-            <div>
-                <h2 id="welcome-msg" style="margin-bottom: 5px;">welcome back.</h2>
-                <p class="text-dim" id="user-display">loading...</p>
-            </div>
-            <div class="avatar-small" id="current-user-avatar"
-                style="width: 50px; height: 50px; border-radius: 50%; background: #222; overflow: hidden;">
-                <!-- img injected -->
-            </div>
-        </div>
-
-        <!-- Feed View -->
-        <div id="view-feed">
-            <!-- Category Filter -->
-            <div class="card mb-lg">
-                <div class="flex align-center gap-md" style="flex-wrap: wrap;">
-                    <button class="btn btn-ghost category-filter" data-category="" style="font-size: 0.85rem;">all
-                        topics</button>
-                    <div id="category-filters" class="flex align-center gap-sm" style="flex-wrap: wrap;">
-                        <!-- Categories injected here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Create Topic Button -->
-            <div class="mb-xl">
-                <a href="create-topic.html" class="btn btn-red">create new topic</a>
-            </div>
-
-            <!-- Topics Container -->
-            <div id="topics-container" class="flex-col">
-                <div class="loading-spinner"></div>
-            </div>
-        </div>
-
-        <!-- Profile View -->
-        <div id="view-profile" style="display: none;">
+    <main class="dash-wrapper">
+        <!-- Banned overlay -->
+        <div id="banned-overlay" class="banned-overlay" style="display:none;">
             <div class="card text-center">
-                <div id="profile-avatar-large"
-                    style="width:120px; height:120px; border-radius:50%; background:#222; margin:0 auto 20px; overflow:hidden;">
-                </div>
-                <h2 id="profile-username">...</h2>
-                <p id="profile-bio" class="text-dim" style="max-width:600px; margin:0 auto;">...</p>
-                <p id="profile-joined" class="text-dim mt-md" style="font-size:0.8rem;">joined: ...</p>
-
-                <div class="divider my-xl"></div>
-                <h3 class="text-left mb-md">my posts</h3>
-                <div id="profile-posts-container" class="text-left">
-                    <!-- User posts go here -->
-                </div>
+                <h2 class="text-red mb-md">access restricted</h2>
+                <p class="text-dim">your account has been suspended by the guardian system.</p>
             </div>
         </div>
 
-        <!-- Settings View -->
-        <div id="view-settings" style="display: none;">
-            <div class="card">
-                <h2 class="mb-lg">account settings</h2>
+        <!-- Loading state -->
+        <div id="dash-loading" class="dash-loading">
+            <div class="loading-spinner"></div>
+            <p class="text-dim" style="margin-top: 16px; font-size: 0.9rem;">loading community...</p>
+        </div>
 
-                <form id="settings-form" class="flex-col gap-md">
-                    <div class="input-group">
-                        <label class="input-label">avatar</label>
-                        <div class="flex align-center gap-md">
-                            <div id="avatar-preview" class="avatar-upload" style="width: 100px; height: 100px;">
-                                <span class="text-dim">click to upload</span>
+        <!-- Main content (hidden until loaded) -->
+        <div id="dash-content" style="display: none;">
+
+            <!-- User bar -->
+            <section class="user-bar">
+                <div class="user-bar-left">
+                    <div class="user-bar-avatar" id="user-avatar">
+                        <span id="user-initial">?</span>
+                    </div>
+                    <div class="user-bar-info">
+                        <h2 id="user-greeting">hello, user</h2>
+                        <p class="text-dim" id="user-email" style="font-size: 0.8rem;"></p>
+                    </div>
+                </div>
+                <div class="user-bar-actions">
+                    <button class="btn-icon" id="settings-toggle" title="settings">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="3"></circle>
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z">
+                            </path>
+                        </svg>
+                    </button>
+                    <button class="btn btn-ghost" id="logout-btn" style="font-size: 0.8rem;">sign out</button>
+                </div>
+            </section>
+
+            <!-- Settings panel (collapsed by default) -->
+            <section class="settings-panel" id="settings-panel" style="display: none;">
+                <div class="dash-card">
+                    <div class="settings-header">
+                        <h3>account settings</h3>
+                        <button class="btn-text text-dim" id="settings-close">close ×</button>
+                    </div>
+                    <form id="settings-form" class="settings-form">
+                        <div class="settings-grid">
+                            <div class="input-group">
+                                <label class="input-label">username</label>
+                                <input type="text" id="set-username" class="input-field" placeholder="your username">
                             </div>
-                            <div class="flex-col gap-sm">
-                                <input type="file" id="avatar-input" accept="image/*" style="display: none;">
-                                <button type="button" class="btn btn-ghost" id="avatar-upload-btn"
-                                    style="font-size: 0.85rem;">choose image</button>
-                                <button type="button" class="btn-text text-dim hover-white" id="avatar-remove-btn"
-                                    style="font-size: 0.85rem; display: none;">remove</button>
+                            <div class="input-group">
+                                <label class="input-label">location</label>
+                                <input type="text" id="set-location" class="input-field" placeholder="city, country">
+                            </div>
+                            <div class="input-group" style="grid-column: 1 / -1;">
+                                <label class="input-label">bio</label>
+                                <textarea id="set-bio" class="input-field" rows="3"
+                                    placeholder="tell us about yourself..."></textarea>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">website</label>
+                                <input type="url" id="set-website" class="input-field" placeholder="https://...">
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label">avatar</label>
+                                <input type="file" id="set-avatar" class="input-field" accept="image/*">
                             </div>
                         </div>
-                        <p class="text-dim" style="font-size: 0.75rem; margin-top: 8px;">max 5MB, jpg/png/gif/webp</p>
-                    </div>
-
-                    <div class="input-group">
-                        <label class="input-label">username</label>
-                        <input type="text" id="set-username" class="input-field" required>
-                    </div>
-
-                    <div class="input-group">
-                        <label class="input-label">bio / description</label>
-                        <textarea id="set-bio" class="input-field" rows="3"
-                            placeholder="tell us about yourself..."></textarea>
-                    </div>
-
-                    <div class="input-group">
-                        <label class="input-label">website</label>
-                        <input type="url" id="set-website" class="input-field" placeholder="https://">
-                    </div>
-
-                    <div class="input-group">
-                        <label class="input-label">location</label>
-                        <input type="text" id="set-location" class="input-field" placeholder="city, country">
-                    </div>
-
-                    <div class="input-group">
-                        <label class="input-label">social links (optional)</label>
-                        <div class="flex-col gap-sm">
-                            <input type="url" id="set-github" class="input-field" placeholder="github profile url">
-                            <input type="url" id="set-twitter" class="input-field" placeholder="twitter/x profile url">
-                            <input type="url" id="set-linkedin" class="input-field" placeholder="linkedin profile url">
+                        <div class="flex gap-md align-center mt-md">
+                            <button type="submit" class="btn btn-red" id="save-settings-btn">save changes</button>
+                            <span id="settings-msg" class="text-dim" style="font-size: 0.8rem;"></span>
                         </div>
-                    </div>
+                    </form>
+                </div>
+            </section>
 
-                    <button type="submit" class="btn btn-red" style="width: fit-content;" id="save-settings-btn">save
-                        changes</button>
-                    <p id="settings-error-msg" class="text-red" style="display: none; font-size: 0.85rem;"></p>
-                </form>
+            <!-- Discussions feed -->
+            <section class="dash-feed">
+                <div class="feed-header">
+                    <h3>discussions</h3>
+                    <a href="https://github.com/FDJTS/Infiniware11/issues/new" target="_blank" rel="noopener"
+                        class="btn btn-red" style="font-size: 0.8rem;">
+                        + new discussion
+                    </a>
+                </div>
+                <div id="issues-feed">
+                    <div class="loading-spinner"></div>
+                </div>
+                <div id="feed-empty" style="display: none;" class="text-center">
+                    <p class="text-dim" style="padding: 40px 0;">no discussions yet. start one on github!</p>
+                </div>
+                <div id="feed-error" style="display: none;" class="text-center">
+                    <p class="text-red" style="padding: 40px 0;">failed to load discussions. try refreshing.</p>
+                    <button class="btn btn-ghost" id="retry-btn" style="font-size: 0.8rem;">retry</button>
+                </div>
+            </section>
+        </div>
+    </main>
 
-                <div class="divider my-xl"></div>
-
-                <h3 class="text-red" style="font-size: 1rem;">danger zone</h3>
-                <p class="text-dim" style="font-size: 0.85rem;">once you delete your account, there is no going back.
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo-text"><span>I</span>nfiniware</div>
+                <p class="text-dim" style="max-width: 250px; font-size: 0.85rem;">
+                    an independent ecosystem building tools with intention and structural focus.
                 </p>
-                <button id="delete-account-btn" class="btn btn-ghost"
-                    style="border-color: var(--clr-red-accent); color: var(--clr-red-accent);">delete account</button>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>platform</h4>
+                    <div class="footer-item"><a href="manifesto.html" class="footer-link">manifesto</a></div>
+                    <div class="footer-item"><a href="faq.html" class="footer-link">faq</a></div>
+                    <div class="footer-item"><a href="dashboard.html" class="footer-link">community hub</a></div>
+                </div>
+                <div class="footer-col">
+                    <h4>legal</h4>
+                    <div class="footer-item"><a href="privacy.html" class="footer-link">privacy policy</a></div>
+                    <div class="footer-item"><a href="license.html" class="footer-link">license</a></div>
+                </div>
+                <div class="footer-col">
+                    <h4>support</h4>
+                    <div class="footer-item"><a href="mailto:support@infiniware.bid"
+                            class="footer-link">support@infiniware.bid</a></div>
+                </div>
             </div>
         </div>
+        <div class="footer-bottom">
+            <span>infiniware © 2026</span>
+            <span>crafted by human hand</span>
+        </div>
+    </footer>
 
-    </div>
-
-    <!-- Scripts -->
-    <script type="module" src="dashboard-logic.js"></script>
-    <script type="module">
-        // Load guardian if it exists
-        try {
-            import('./guardian.js');
-        } catch (e) {
-            // Guardian not required
-        }
-    </script>
-
+    <script type="module" src="dashboard.js"></script>
 </body>
 
 </html>
