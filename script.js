@@ -448,4 +448,23 @@ function initPrayerTimes() {
       list.innerHTML = `<p class="text-red" style="font-size: 0.85rem;">failed to fetch times.</p>`
     }
   }
+
+  // Mobile Menu Toggle
+  const mobileBtn = document.querySelector('.mobile-menu-btn')
+  const navList = document.querySelector('.nav-list')
+
+  if (mobileBtn && navList) {
+    mobileBtn.addEventListener('click', () => {
+      navList.classList.toggle('nav-active')
+      mobileBtn.textContent = navList.classList.contains('nav-active') ? '✕' : '☰'
+    })
+  }
+
+  // Prayer Times Widget Responsive Wrap
+  const prayerList = document.getElementById('prayer-times-list')
+  if (prayerList) {
+    prayerList.style.flexWrap = 'wrap'
+    prayerList.style.justifyContent = 'center'
+    prayerList.style.gap = '15px'
+  }
 }
