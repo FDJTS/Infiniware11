@@ -22,15 +22,10 @@ service cloud.firestore {
 
     // Users collection
     match /users/{userId} {
-      // Anyone authenticated can read user profiles (public profiles)
-      allow read: if isSignedIn();
-      // Users can only write their own profile
-      allow create: if isSignedIn() && isOwner(userId) && 
-                       request.resource.data.uid == userId &&
-                       request.resource.data.username is string &&
-                       request.resource.data.email is string;
-      allow update: if isSignedIn() && isOwner(userId);
-      allow delete: if isSignedIn() && isOwner(userId);
+      // Profiles are public - allows profile.html to load instantly
+      allow read: if true;
+      // Users can manage their own data
+      allow write: if isSignedIn() && request.auth.uid == userId;
     }
 
     // Categories collection (read-only for all authenticated users, write only by admins)

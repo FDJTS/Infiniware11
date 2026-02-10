@@ -108,14 +108,40 @@
                 </div>
             </section>
 
+            <!-- New Discussion Modal (hidden by default) -->
+            <div id="new-discussion-modal" class="banned-overlay" style="display: none;">
+                <div class="dash-card" style="width: 100%; max-width: 600px; margin: 20px;">
+                    <div class="settings-header">
+                        <h3>start a new discussion</h3>
+                        <button class="btn-text text-dim" id="close-discussion-modal">close ×</button>
+                    </div>
+                    <form id="new-discussion-form">
+                        <div class="input-group">
+                            <label class="input-label">title</label>
+                            <input type="text" id="discussion-title" class="input-field"
+                                placeholder="what's on your mind?" required>
+                        </div>
+                        <div class="input-group mt-md">
+                            <label class="input-label">body</label>
+                            <textarea id="discussion-body" class="input-field" rows="6"
+                                placeholder="describe your topic... markdown supported" required></textarea>
+                        </div>
+                        <div class="flex gap-md align-center mt-lg">
+                            <button type="submit" class="btn btn-red" id="submit-discussion-btn">post
+                                discussion</button>
+                            <span id="discussion-msg" class="text-dim" style="font-size: 0.8rem;"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <!-- Discussions feed -->
             <section class="dash-feed">
                 <div class="feed-header">
                     <h3>discussions</h3>
-                    <a href="https://github.com/FDJTS/Infiniware11/issues/new" target="_blank" rel="noopener"
-                        class="btn btn-red" style="font-size: 0.8rem;">
+                    <button id="new-discussion-btn" class="btn btn-red" style="font-size: 0.8rem;">
                         + new discussion
-                    </a>
+                    </button>
                 </div>
                 <div id="issues-feed">
                     <div class="loading-spinner"></div>

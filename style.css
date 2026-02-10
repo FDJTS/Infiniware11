@@ -765,7 +765,7 @@ section {
     padding: 20px 24px;
     background: linear-gradient(135deg, rgba(227, 30, 36, 0.06) 0%, rgba(10, 10, 10, 0.8) 100%);
     border: 1px solid rgba(227, 30, 36, 0.12);
-    border-radius: 12px;
+    border-radius: 0;
     margin-bottom: 24px;
     backdrop-filter: blur(12px);
 }
@@ -779,7 +779,7 @@ section {
 .user-bar-avatar {
     width: 48px;
     height: 48px;
-    border-radius: 50%;
+    border-radius: 0;
     background: var(--clr-gray-dark);
     display: flex;
     align-items: center;
@@ -815,7 +815,7 @@ section {
 .btn-icon {
     background: none;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 8px;
+    border-radius: 0;
     color: var(--clr-gray-dim);
     cursor: pointer;
     padding: 8px;
@@ -852,7 +852,7 @@ section {
 .dash-card {
     background: rgba(15, 15, 15, 0.9);
     border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 12px;
+    border-radius: 0;
     padding: 24px;
     backdrop-filter: blur(8px);
 }
@@ -896,27 +896,37 @@ section {
     margin: 0;
 }
 
-/* Issue Cards */
+/* Issue Cards - GitHub Aesthetic (Utterances Style) */
 .issue-card {
     display: block;
     text-decoration: none;
     color: inherit;
-    background: rgba(15, 15, 15, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-left: 3px solid transparent;
-    border-radius: 10px;
-    padding: 16px 20px;
-    margin-bottom: 8px;
-    transition: all var(--trans-main);
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-left: 2px solid transparent;
+    /* Status indicator placeholder */
+    border-radius: 0;
+    padding: 12px 0;
+    margin-bottom: 0;
+    transition: background 0.1s ease;
     cursor: pointer;
 }
 
 .issue-card:hover {
-    background: rgba(20, 20, 20, 0.9);
-    border-color: rgba(255, 255, 255, 0.08);
-    border-left-color: var(--clr-red-accent);
-    transform: translateX(4px);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    background: rgba(255, 255, 255, 0.02);
+    /* No elevate/shadow on hover for cleaner list feel */
+    transform: none;
+    box-shadow: none;
+}
+
+.issue-card:first-child {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    /* Top border for first item */
+}
+
+/* Remove side padding on feed to span full width */
+.dash-feed {
+    margin-top: 16px;
 }
 
 .issue-card-inner {
@@ -928,10 +938,17 @@ section {
 .issue-avatar {
     width: 36px;
     height: 36px;
-    border-radius: 50%;
+    border-radius: 0;
     overflow: hidden;
     flex-shrink: 0;
     border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Enforce Squared UI Globally for Dashboard */
+.dash-wrapper .btn,
+.dash-wrapper .input-field,
+.dash-wrapper .label-tag {
+    border-radius: 0 !important;
 }
 
 .issue-avatar img {
@@ -985,15 +1002,17 @@ section {
 
 .issue-arrow {
     color: var(--clr-gray-dim);
-    font-size: 1.1rem;
+    font-size: 1rem;
     opacity: 0;
-    transition: all var(--trans-main);
+    transition: opacity 0.2s ease;
     flex-shrink: 0;
+    margin-left: auto;
+    /* Push to far right */
 }
 
 .issue-card:hover .issue-arrow {
-    opacity: 1;
-    color: var(--clr-red-accent);
+    opacity: 0.5;
+    color: var(--clr-white);
 }
 
 .text-green {

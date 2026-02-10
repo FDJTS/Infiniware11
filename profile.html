@@ -4,161 +4,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>profile - infiniware</title>
+    <title>User Profile - Infiniware</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        .profile-container {
+            max-width: 600px;
+            margin: 80px auto;
+            padding: 24px;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            background: var(--clr-gray-dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--clr-gray-dim);
+            overflow: hidden;
+            border-radius: 0;
+            /* Squared */
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-family: var(--f-ui);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--clr-white);
+            margin: 0;
+        }
+
+        .profile-bio {
+            color: var(--clr-gray-dim);
+            line-height: 1.5;
+            max-width: 400px;
+        }
+
+        .profile-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: var(--clr-red-accent);
+        }
+
+        .profile-meta a {
+            color: inherit;
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+        }
+
+        .profile-meta a:hover {
+            border-color: currentColor;
+        }
+
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+        }
+
+        #error-msg {
+            color: var(--clr-red-accent);
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 
-<body>
-
-    <nav class="header">
-        <div class="nav-brand">
-            <a href="index.html" class="logo-text"><span>I</span>nfiniware</a>
-        </div>
-        <div class="nav-list">
-            <a href="dashboard.html" class="nav-link">dashboard</a>
-            <a href="#" class="nav-link" id="logout-btn">sign out</a>
+<body class="dash-wrapper">
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-text"><span>I</span>nfiniware</div>
+            </a>
+            <a href="dashboard.html" class="btn btn-ghost">dashboard</a>
         </div>
     </nav>
 
-    <div class="container" style="max-width: 900px; margin-top: 40px;">
-        
-        <!-- Profile Header -->
-        <div id="profile-header" class="card mb-lg">
+    <main class="profile-container">
+        <div id="loading" class="loading-screen">
             <div class="loading-spinner"></div>
+            <p class="text-dim" style="margin-top: 16px;">fetching profile...</p>
         </div>
 
-        <!-- Profile Content -->
-        <div id="profile-content" class="card">
-            <div class="loading-spinner"></div>
+        <div id="profile-content" style="display: none;">
+            <div class="profile-header">
+                <div class="profile-avatar" id="p-avatar">?</div>
+                <h1 class="profile-name" id="p-username">user</h1>
+                <p class="profile-bio" id="p-bio">no bio available.</p>
+                <div class="profile-meta">
+                    <span id="p-location"></span>
+                    <a href="#" id="p-website" target="_blank" style="display: none;">website ↗</a>
+                </div>
+            </div>
         </div>
 
-    </div>
+        <div id="error-msg" style="display: none;">
+            <h2>user not found</h2>
+            <p class="text-dim">the requested profile could not be loaded.</p>
+        </div>
+    </main>
 
-    <script type="module">
-        import { auth } from './firebase-init.js';
-        import { initAuthListener, logout } from './auth.js';
-        import { getUserProfile, getTopicsByUser, getPostsByUser } from './community.js';
-        import { formatDate } from './utils.js';
-
-        const profileHeader = document.getElementById('profile-header');
-        const profileContent = document.getElementById('profile-content');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        // Get user ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const profileUid = urlParams.get('uid');
-
-        if (!profileUid) {
-            window.location.href = 'dashboard.html';
-        }
-
-        initAuthListener((user) => {
-            if (!user) {
-                window.location.href = 'signin.html';
-            } else {
-                loadProfile();
-            }
-        });
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => logout());
-        }
-
-        async function loadProfile() {
-            try {
-                const profile = await getUserProfile(profileUid);
-                if (!profile) {
-                    profileHeader.innerHTML = '<p class="text-red">user not found.</p>';
-                    return;
-                }
-
-                // Load user's topics and posts
-                const topics = await getTopicsByUser(profileUid, 20);
-                const posts = await getPostsByUser(profileUid, 20);
-
-                // Render header
-                const joinedDate = profile.created_at?.toDate 
-                    ? profile.created_at.toDate() 
-                    : (profile.created_at ? new Date(profile.created_at) : null);
-                const joinedStr = joinedDate ? joinedDate.toLocaleDateString() : 'unknown';
-
-                const avatarHtml = profile.avatar_url
-                    ? `<img src="${profile.avatar_url}" style="width:100%; height:100%; object-fit:cover;">`
-                    : `<span style="opacity:0.5; font-size:3rem;">${(profile.username || 'U')[0].toUpperCase()}</span>`;
-
-                profileHeader.innerHTML = `
-                    <div class="flex gap-lg align-start">
-                        <div class="avatar-small" style="width: 120px; height: 120px; border-radius: 50%; background: #222; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                            ${avatarHtml}
-                        </div>
-                        <div style="flex: 1;">
-                            <h2 style="margin-bottom: 10px;">${escapeHtml(profile.username || 'user')}</h2>
-                            ${profile.bio ? `<p class="text-dim" style="margin-bottom: 10px;">${escapeHtml(profile.bio)}</p>` : ''}
-                            <div class="flex gap-md" style="flex-wrap: wrap; font-size: 0.85rem;">
-                                ${profile.location ? `<span class="text-dim">📍 ${escapeHtml(profile.location)}</span>` : ''}
-                                ${profile.website ? `<a href="${profile.website}" target="_blank" rel="noopener noreferrer" class="text-red">${escapeHtml(profile.website)}</a>` : ''}
-                                <span class="text-dim">joined ${joinedStr}</span>
-                            </div>
-                            ${profile.social_links && Object.keys(profile.social_links).length > 0 ? `
-                                <div class="flex gap-md mt-md" style="flex-wrap: wrap;">
-                                    ${Object.entries(profile.social_links).map(([key, url]) => 
-                                        `<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-dim" style="text-decoration: none;">${key}</a>`
-                                    ).join('')}
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-
-                // Render content
-                profileContent.innerHTML = `
-                    <div class="flex-col gap-lg">
-                        <div>
-                            <h3 class="mb-md">topics (${topics.length})</h3>
-                            ${topics.length === 0 
-                                ? '<p class="text-dim">no topics yet.</p>'
-                                : topics.map(topic => `
-                                    <div class="mb-md pb-md" style="border-bottom: 1px solid var(--clr-gray-dark);">
-                                        <a href="topic.html?id=${topic.id}" class="text-white" style="font-weight: 600; text-decoration: none; display: block; margin-bottom: 5px;">
-                                            ${escapeHtml(topic.title)}
-                                        </a>
-                                        <span class="text-dim" style="font-size: 0.85rem;">${formatDate(topic.created_at)}</span>
-                                    </div>
-                                `).join('')
-                            }
-                        </div>
-
-                        <div>
-                            <h3 class="mb-md">posts (${posts.length})</h3>
-                            ${posts.length === 0 
-                                ? '<p class="text-dim">no posts yet.</p>'
-                                : posts.map(post => `
-                                    <div class="mb-md pb-md" style="border-bottom: 1px solid var(--clr-gray-dark);">
-                                        <a href="topic.html?id=${post.topic_id}#post-${post.id}" class="text-white" style="font-weight: 600; text-decoration: none; display: block; margin-bottom: 5px;">
-                                            view in topic →
-                                        </a>
-                                        <p class="text-dim" style="font-size: 0.9rem; margin-bottom: 5px;">${escapeHtml(post.content.substring(0, 150))}${post.content.length > 150 ? '...' : ''}</p>
-                                        <span class="text-dim" style="font-size: 0.85rem;">${formatDate(post.created_at)}</span>
-                                    </div>
-                                `).join('')
-                            }
-                        </div>
-                    </div>
-                `;
-
-            } catch (error) {
-                console.error("Error loading profile:", error);
-                profileHeader.innerHTML = '<p class="text-red">failed to load profile.</p>';
-            }
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-    </script>
+    <script type="module" src="profile.js"></script>
 </body>
 
 </html>

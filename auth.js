@@ -101,7 +101,14 @@ export async function signInWithGithub() {
             await createUserDocument(user, user.displayName || user.email.split('@')[0]);
         }
 
-        return user;
+        // Store access token for GitHub API calls
+        const credential = GithubAuthProvider.credentialFromResult(result);
+        if (credential && credential.accessToken) {
+            sessionStorage.setItem('gh_token', credential.accessToken);
+        }
+
+        // Return result to access credential.accessToken
+        return result;
     } catch (error) {
         console.error("GitHub SignIn Error:", error);
         throw error;

@@ -20,5 +20,6 @@ const storage = getStorage(app);
 
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
+githubProvider.addScope('public_repo');
 
 export { auth, db, storage, googleProvider, githubProvider };
