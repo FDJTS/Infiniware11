@@ -331,17 +331,17 @@ function listenForPosts() {
         const safeContent = escapeHtml(post.content || '')
         const safeUsername = escapeHtml(post.username || 'anonymous')
         return `
-                <div class="post-card" style="border-bottom: 1px solid #111; padding: 30px 0;">
-                    <div class="user-block" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                        <div style="width: 32px; height: 32px; background: #222; border: 1px solid #333; overflow: hidden;">
-                            <div style="width: 100%; height: 100%; background: #444;"></div>
+                <div class="post-card">
+                    <div class="user-block">
+                        <div class="user-avatar-placeholder">
+                            <div class="avatar-fill"></div>
                         </div>
-                        <div>
-                            <span class="user-name" style="display: block; font-weight: 700;">${safeUsername}</span>
-                            <span style="font-size: 0.7rem; color: #444;">${post.created_at ? formatTime(post.created_at) : 'just now'}</span>
+                        <div class="user-info">
+                            <span class="user-name">${safeUsername}</span>
+                            <span class="post-date">${post.created_at ? formatTime(post.created_at) : 'just now'}</span>
                         </div>
                     </div>
-                    <p style="color: #aaa; line-height: 1.7;">${safeContent}</p>
+                    <p class="post-content">${safeContent}</p>
                 </div>
             `
       })

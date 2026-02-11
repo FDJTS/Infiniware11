@@ -368,6 +368,7 @@ function openDiscussionDetail(issue) {
 
   // Populate header data
   detailTitle.textContent = issue.title
+  detailTitle.setAttribute('data-issue-number', issue.number)
 
   const date = new Date(issue.updated_at)
   detailMeta.innerHTML = `<span class="text-white">${escapeHtml(issue.user.login)}</span> opened this discussion ${getTimeAgo(date)}`
@@ -419,12 +420,32 @@ function loadUtterances(issueNumber) {
   script.src = 'https://utteranc.es/client.js'
   script.setAttribute('repo', GITHUB_REPO)
   script.setAttribute('issue-number', issueNumber) // Use issue-number for direct mapping
-  script.setAttribute('theme', 'github-dark')
+
+  // Sync theme
+  const currentTheme =
+    document.documentElement.getAttribute('data-theme') === 'light' ? 'github-light' : 'github-dark'
+  script.setAttribute('theme', currentTheme)
+
   script.setAttribute('crossorigin', 'anonymous')
   script.async = true
 
   utterancesContainer.appendChild(script)
 }
+
+// Listen for theme changes to reload Utterances if open
+window.addEventListener('message', (event) => {})
+
+// Better: Add an observer for data-theme on html
+const themeObserver = new MutationObserver(() => {
+  if (discussionDetail.style.display === 'block') {
+    const issueNum = detailTitle.getAttribute('data-issue-number')
+    if (issueNum) loadUtterances(issueNum)
+  }
+})
+themeObserver.observe(document.documentElement, {
+  attributes: true,
+  attributeFilter: ['data-theme']
+})
 
 backToFeedBtn.addEventListener('click', () => {
   discussionDetail.style.display = 'none'
