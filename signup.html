@@ -13,10 +13,24 @@
     <div class="flex-center">
       <div class="auth-card card">
         <div class="text-center mb-lg">
-          <a href="index.html" class="logo-text" style="font-size: 1.8rem"
-            ><span>I</span>nfiniware</a
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 20px;
+            "
           >
-          <p class="text-dim mt-md">join the network.</p>
+            <a href="index.html" class="logo-text" style="font-size: 1.8rem"
+              ><span>I</span>nfiniware</a
+            >
+            <button
+              class="theme-toggle-btn"
+              aria-label="toggle theme"
+              style="margin-left: 10px"
+            ></button>
+          </div>
+          <p class="text-dim">join the network.</p>
         </div>
 
         <form id="signup-form" class="flex-col gap-md">
@@ -94,5 +108,6 @@
         }
       })
     </script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

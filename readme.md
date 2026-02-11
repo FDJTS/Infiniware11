@@ -17,6 +17,8 @@ npm install
 npm start
 ```
 
+or run it from live server on index.html
+
 ## tech stack
 
 - **frontend:** vanilla js + html5 (no surplus frameworks)

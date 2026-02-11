@@ -12,7 +12,22 @@
   <body>
     <div class="flex-center">
       <div class="auth-card card text-center">
-        <div class="mb-lg">
+        <div class="text-center mb-lg">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 20px;
+            "
+          >
+            <div class="logo-text" style="font-size: 1.8rem"><span>I</span>nfiniware</div>
+            <button
+              class="theme-toggle-btn"
+              aria-label="toggle theme"
+              style="margin-left: 10px"
+            ></button>
+          </div>
           <svg
             width="64"
             height="64"
@@ -222,5 +237,6 @@
         window.location.href = 'signin.html'
       })
     </script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

@@ -13,18 +13,19 @@
       <div class="nav-brand">
         <a href="index.html" class="logo-text"><span>I</span>nfiniware</a>
       </div>
-      <button class="mobile-menu-btn">☰</button>
+      <div class="nav-extras">
+        <button class="theme-toggle-btn" aria-label="toggle theme"></button>
+        <button class="mobile-menu-btn">☰</button>
+      </div>
       <nav>
-        <ul class="nav-list">
-          <li><a href="index.html" class="nav-link">home</a></li>
-          <li><a href="products.html" class="nav-link">products</a></li>
-          <li><a href="blog.html" class="nav-link">blog</a></li>
-          <li><a href="docs.html" class="nav-link">docs</a></li>
-          <li>
-            <a href="dashboard.html" class="nav-link active">community</a>
-          </li>
-          <li><a href="connect.html" class="nav-link">connect</a></li>
-        </ul>
+        <div class="nav-links">
+          <a href="index.html" class="nav-link">home</a>
+          <a href="products.html" class="nav-link">products</a>
+          <a href="blog.html" class="nav-link">blog</a>
+          <a href="docs.html" class="nav-link">docs</a>
+          <a href="dashboard.html" class="nav-link active">community</a>
+          <a href="connect.html" class="nav-link">connect</a>
+        </div>
       </nav>
     </header>
 
@@ -37,13 +38,17 @@
         </div>
       </div>
 
-      <!-- Loading state -->
-      <div id="dash-loading" class="dash-loading">
+      <!-- Loading State -->
+      <div
+        id="dash-loading"
+        class="flex-center"
+        style="height: 100vh; flex-direction: column; gap: 20px"
+      >
         <div class="loading-spinner"></div>
-        <p class="text-dim" style="margin-top: 16px; font-size: 0.9rem">loading community...</p>
+        <p class="text-dim">loading community...</p>
       </div>
 
-      <!-- Main content (hidden until loaded) -->
+      <!-- Main Content -->
       <div id="dash-content" style="display: none">
         <!-- User bar -->
         <section class="user-bar">
@@ -277,5 +282,6 @@
     </footer>
 
     <script type="module" src="dashboard.js"></script>
+    <script type="module" src="script.js"></script>
   </body>
 </html>

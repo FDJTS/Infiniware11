@@ -45,12 +45,12 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveals()
   initCopyright()
   initPrayerTimes()
+  initMobileMenu()
+  initTheme()
 
   // Logic Dispatcher
   const path = window.location.pathname
-  if (path.includes('community.html')) {
-    initCommunity()
-  } else if (path.includes('dashboard.html')) {
+  if (path.includes('dashboard.html')) {
     initDashboard()
   }
 })
@@ -59,20 +59,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 onAuthStateChanged(auth, async (user) => {
   const isDashboard = window.location.pathname.includes('dashboard.html')
-  const isCommunity = window.location.pathname.includes('community.html')
 
   const dashboardLink = document.getElementById('nav-dashboard')
 
   if (user) {
     if (dashboardLink) dashboardLink.style.display = 'block'
     if (!user.emailVerified) {
-      handleUnverified(user, isDashboard, isCommunity)
+      handleUnverified(user, isDashboard)
     } else {
       // Verified User
-      if (isCommunity) {
-        // Instant reload to dashboard
-        window.location.href = 'dashboard.html'
-      }
       if (isDashboard) {
         checkBanStatus(user.uid)
         listenForPosts()
@@ -82,25 +77,16 @@ onAuthStateChanged(auth, async (user) => {
   } else {
     // Unauthenticated
     if (dashboardLink) dashboardLink.style.display = 'none'
-    if (isDashboard) {
-      window.location.href = 'community.html'
-    }
   }
 })
 
-function handleUnverified(user, isDashboard, isCommunity) {
+function handleUnverified(user, isDashboard) {
   console.log('// infiniware ecosystem: pending verification for', user.email)
 
-  if (isCommunity) {
-    const notice = document.getElementById('verification-notice')
-    const authCard = document.querySelector('.organized-auth')
-    if (notice) notice.style.display = 'block'
-    if (authCard) authCard.style.display = 'none'
-  }
-
   if (isDashboard) {
-    // Dashboard is off-limits for unverified
-    window.location.href = 'community.html'
+    // Optional: show a specific notice on dashboard for unverified
+    const notice = document.getElementById('verification-notice')
+    if (notice) notice.style.display = 'block'
   }
 
   // Polling for verification status
@@ -449,22 +435,76 @@ function initPrayerTimes() {
     }
   }
 
-  // Mobile Menu Toggle
-  const mobileBtn = document.querySelector('.mobile-menu-btn')
-  const navList = document.querySelector('.nav-list')
-
-  if (mobileBtn && navList) {
-    mobileBtn.addEventListener('click', () => {
-      navList.classList.toggle('nav-active')
-      mobileBtn.textContent = navList.classList.contains('nav-active') ? '✕' : '☰'
-    })
-  }
-
   // Prayer Times Widget Responsive Wrap
   const prayerList = document.getElementById('prayer-times-list')
   if (prayerList) {
     prayerList.style.flexWrap = 'wrap'
     prayerList.style.justifyContent = 'center'
     prayerList.style.gap = '15px'
+  }
+}
+
+function initMobileMenu() {
+  const mobileBtn = document.querySelector('.mobile-menu-btn')
+  // Support both old .nav-list and new .nav-links containers
+  const navContainer = document.querySelector('.nav-links') || document.querySelector('.nav-list')
+
+  if (mobileBtn && navContainer) {
+    mobileBtn.addEventListener('click', () => {
+      navContainer.classList.toggle('nav-active')
+      mobileBtn.textContent = navContainer.classList.contains('nav-active') ? '✕' : '☰'
+    })
+  }
+}
+
+function initTheme() {
+  try {
+    const toggleBtns = document.querySelectorAll('.theme-toggle-btn')
+    const html = document.documentElement
+    const savedTheme = localStorage.getItem('theme') || 'dark'
+
+    // Icons
+    const moonIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`
+    const sunIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`
+
+    // Apply initial theme immediately to avoid flash
+    if (savedTheme === 'light') {
+      html.setAttribute('data-theme', 'light')
+    } else {
+      html.removeAttribute('data-theme')
+    }
+
+    // Update all buttons
+    const updateIcons = (theme) => {
+      toggleBtns.forEach((btn) => {
+        btn.innerHTML = theme === 'light' ? moonIcon : sunIcon
+        btn.setAttribute(
+          'aria-label',
+          theme === 'light' ? 'switch to dark mode' : 'switch to light mode'
+        )
+      })
+    }
+
+    updateIcons(savedTheme)
+
+    // Toggle handler
+    toggleBtns.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault()
+        const currentTheme = html.getAttribute('data-theme')
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light'
+
+        if (newTheme === 'light') {
+          html.setAttribute('data-theme', 'light')
+        } else {
+          html.removeAttribute('data-theme')
+        }
+
+        localStorage.setItem('theme', newTheme)
+        updateIcons(newTheme)
+      })
+    })
+  } catch (error) {
+    console.warn('// infiniware system: theme initialization exception handled')
   }
 }
